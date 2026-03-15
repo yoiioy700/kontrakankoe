@@ -216,6 +216,12 @@ export default function DashboardClient({ user, rooms, invoices }: { user: any; 
 
 // ── Add Room Modal ──────────────────────────────────────────────────────────
 function AddRoomModal({ onClose, onAdded }: { onClose: () => void; onAdded: () => void }) {
+  const formatRupiah = (val: string) => {
+    const num = val.replace(/[^0-9]/g, '')
+    if (!num) return ''
+    return 'Rp ' + parseInt(num).toLocaleString('id-ID')
+  }
+  const parseRupiah = (val: string) => val.replace(/[^0-9]/g, '')
   const [form, setForm] = useState({ roomName: '', rentAmount: '', dueDateDay: '5', tenantName: '', tenantPhone: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -254,7 +260,7 @@ function AddRoomModal({ onClose, onAdded }: { onClose: () => void; onAdded: () =
             </div>
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
               <label className="label">Sewa Bulanan (Rp)</label>
-              <input className="input" type="number" placeholder="1500000" value={form.rentAmount} onChange={e => setForm({ ...form, rentAmount: e.target.value })} required />
+              <input className="input" type="text" placeholder="Rp 1.500.000" value={form.rentAmount} onChange={e => setForm({ ...form, rentAmount: formatRupiah(e.target.value) })} required />
             </div>
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
               <div className="divider" style={{ margin: '8px 0' }}>Data Penyewa (Opsional)</div>

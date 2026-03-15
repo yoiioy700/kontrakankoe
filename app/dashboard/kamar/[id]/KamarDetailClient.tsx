@@ -231,7 +231,7 @@ function EditRoomModal({ room, onClose, onSaved }: { room: any; onClose: () => v
             </div>
             <div className="form-group">
               <label className="label">Sewa/Bulan (Rp)</label>
-              <input className="input" type="number" value={form.rentAmount} onChange={e => setForm({ ...form, rentAmount: e.target.value })} required />
+              <input className="input" type="text" value={form.rentAmount} onChange={e => setForm({ ...form, rentAmount: 'Rp ' + e.target.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.') })} required />
             </div>
             <div className="form-group">
               <label className="label">Tgl Jatuh Tempo</label>
