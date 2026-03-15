@@ -36,7 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           id: user.id,
           name: user.name,
           email: user.email,
-          image: user.image,
+          image: (user as any).image ?? null,
           onboarded: user.onboarded,
         }
       },
@@ -51,18 +51,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             where: { email: user.email! },
           })
           if (!existing) {
-            await prisma.user.create({
+            await (prisma.user.create as any)({
               data: {
                 name: user.name || 'Google User',
                 email: user.email!,
-                image: user.image,
-                passwordHash: null // Added this line to satisfy Prisma (optional string field might need explict null depending on Prisma version/config)
+                image: user.image ?? null,
+                passwordHash: null,
               },
             })
-          } else if (user.image && !existing.image) {
-            await prisma.user.update({
+          } else if ((user as any).image && !(existing as any).image) {
+            await (prisma.user.update as any)({
               where: { email: user.email! },
-              data: { image: user.image },
+              data: { image: user.image ?? null },
             })
           }
         }
