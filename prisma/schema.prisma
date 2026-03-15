@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id              String   @id @default(cuid())
+  name            String
+  email           String   @unique
+  passwordHash    String?
+  phone           String?
+  image           String?
+  propertyName    String?
+  propertyAddress String?
+  onboarded       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  rooms           Room[]
+}
+
+model Room {
+  id          String    @id @default(cuid())
+  roomName    String
+  rentAmount  Float
+  dueDateDay  Int       // 1-28
+  tenantName  String?
+  tenantPhone String?
+  status      String    @default("occupied") // "occupied" | "vacant"
+  ownerId     String
+  createdAt   DateTime  @default(now())
+  owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  invoices    Invoice[]
+}
+
+model Invoice {
+  id              String    @id @default(cuid())
+  token           String    @unique @default(cuid())
+  periodMonth     String    // "2026-03"
+  amount          Float
+  status          String    @default("pending") // "pending" | "sent" | "paid" | "expired"
+  mayarPaymentId  String?
+  mayarPaymentUrl String?
+  sentAt          DateTime?
+  paidAt          DateTime?
+  dueAt           DateTime
+  roomId          String
+  createdAt       DateTime  @default(now())
+  room            Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
