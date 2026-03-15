@@ -10,6 +10,12 @@ export default function OnboardingPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [property, setProperty] = useState({ propertyName: '', propertyAddress: '' })
+  const formatRupiah = (val: string) => {
+    const num = val.replace(/[^0-9]/g, '')
+    if (!num) return ''
+    return 'Rp ' + parseInt(num).toLocaleString('id-ID')
+  }
+  const parseRupiah = (val: string) => val.replace(/[^0-9]/g, '')
   const [room, setRoom] = useState({
     roomName: '', rentAmount: '', dueDateDay: '5',
     tenantName: '', tenantPhone: '',
@@ -37,7 +43,7 @@ export default function OnboardingPage() {
       const res = await fetch('/api/onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...property, room }),
+        body: JSON.stringify({ ...property, room: { ...room, rentAmount: parseRupiah(room.rentAmount) } }),
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Gagal menyimpan'); return }
@@ -113,8 +119,8 @@ export default function OnboardingPage() {
                 </div>
                 <div className="form-group">
                   <label className="label">Sewa per Bulan (Rp)</label>
-                  <input className="input" type="number" placeholder="800000"
-                    value={room.rentAmount} onChange={e => setRoom({ ...room, rentAmount: e.target.value })} required />
+                  <input className="input" type="text" placeholder="Rp 800.000"
+                    value={room.rentAmount} onChange={e => setRoom({ ...room, rentAmount: formatRupiah(e.target.value) })} required />
                 </div>
                 <div className="form-group">
                   <label className="label">Tanggal Jatuh Tempo</label>
