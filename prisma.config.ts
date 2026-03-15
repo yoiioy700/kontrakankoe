@@ -11,7 +11,7 @@ export default defineConfig({
   datasource: {
     // @ts-ignore - Prisma v7 types don't officially export adapter here yet
     adapter: () => {
-      const pool = new Pool({ connectionString: process.env.DATABASE_URL! });
+      const pool = new Pool({ connectionString: process.env.DATABASE_URL! }) as any;
       return new PrismaNeon(pool) as any;
     },
   },
