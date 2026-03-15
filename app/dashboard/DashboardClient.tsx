@@ -233,7 +233,7 @@ function AddRoomModal({ onClose, onAdded }: { onClose: () => void; onAdded: () =
     try {
       const res = await fetch('/api/rooms', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, rentAmount: parseRupiah(form.rentAmount) }),
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Gagal tambah kamar'); return }
