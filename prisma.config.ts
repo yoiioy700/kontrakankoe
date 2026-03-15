@@ -1,17 +1,22 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
-import path from "path";
-import { PrismaBetterSQLite3 } from "@prisma/adapter-better-sqlite3";
+import { Pool, neonConfig } from "@neondatabase/serverless";
+import { PrismaNeon } from "@prisma/adapter-neon";
+import ws from "ws";
 
-const dbPath = "./prisma/dev.db";
-const absolutePath = path.resolve(process.cwd(), dbPath);
+neonConfig.webSocketConstructor = ws;
+
+const connectionString = process.env.DATABASE_URL!;
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
   datasource: {
-    url: `file:${absolutePath}`,
+    url: connectionString,
   },
   migrate: {
-    adapter: () => new PrismaBetterSQLite3(absolutePath) as any,
+    adapter: () => {
+      const pool = new Pool({ connectionString });
+      return new PrismaNeon(pool) as any;
+    },
   },
 });
